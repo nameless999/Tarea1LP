@@ -770,7 +770,7 @@ int main()
    NumMapa = 0;
    //Genera el mapa
    printf ("\033[2J\033[1;1H");  
-   printf("El juego a comenzado...no mueras ♪└|∵|┐♪└|∵|┘♪┌|∵|┘♪ ♪└|∵┌|└| ∵ |┘|┐∵|┘\n\n\n\n");
+   printf("El juego ha comenzado...no mueras ♪└|∵|┐♪└|∵|┘♪┌|∵|┘♪ ♪└|∵┌|└| ∵ |┘|┐∵|┘\n\n\n\n");
    map = Map(NumMapa, tamano, pos);
 
    largo = tamano[0];
