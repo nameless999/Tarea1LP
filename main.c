@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "enemigo.c"
 
-//pos[0] es la fila
-//pos[1] es la columna
+//pos[0] es el largo
+//pos[1] es el ancho
 //pos[2] es fila sin sumar 2t m
 
 int dontMove(char **map, int *pos) // X
@@ -749,6 +750,7 @@ int main()
  	int x,y,largo,ancho,NumMapa;
  	char **map, anchochar[10],largochar[10],tecla,accion;
  	int pos[3], tamano[2];
+   tLista *listaEnemigosSwitch;
  	//Termina declaración de variables
 
    printf ("\033[2J\033[1;1H");
@@ -772,20 +774,23 @@ int main()
    printf ("\033[2J\033[1;1H");  
    printf("El juego ha comenzado...no mueras ♪└|∵|┐♪└|∵|┘♪┌|∵|┘♪ ♪└|∵┌|└| ∵ |┘|┐∵|┘\n\n\n\n");
    map = Map(NumMapa, tamano, pos);
-
    largo = tamano[0];
    ancho = tamano[1];
+   listaEnemigosSwitch = crearListaEnemigos(map,largo,ancho);
 
    printMap(map,largo,ancho);
    printf("Es su turno, por favor haga un movimiento.\n");
    while(1)
    {
  	//Termina de generar el mapa
-   	accion = movUsuario(map, pos, largo, ancho);   
+   	accion = movUsuario(map, pos,  largo, ancho);
+      accion = movEnemigos(listaEnemigosSwitch, map);   
+
       if (accion == '2' && NumMapa >= 2)
          {
             accion = '3';
          }
+
       switch(accion)
       {
          case '1':
@@ -800,6 +805,7 @@ int main()
                printf("Nivel %d superado, felicitaciones!.\n\n\n\n", NumMapa);
                printMap(map,largo,ancho);  
             break;
+
 
          case '0':
             printf("GAME OVER\n");
