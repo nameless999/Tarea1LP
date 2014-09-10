@@ -10,13 +10,15 @@ typedef struct nodo
 
 typedef struct Lista {
         tNodo *head;
-        tNodo *tail;
         tNodo *curr;
+        tNodo *tail;
         unsigned int listSize;
         unsigned int pos;
 }tLista;
 
+
+
 tLista* inicializacion ();
 void printA(tLista *lista);
- 
+void moveToNext(tLista *lista) ;
  #endif

@@ -1,8 +1,7 @@
 #include "lista.c"
-
 #include "enemigo.h"
 
-tEnemigo* crearEnemigo( char tipo, int maxmov, int pasos, char direccion, int x, int y)
+tEnemigo* crearEnemigo( char tipo, int maxmov, int pasos, char direccion, int x, int y, char nombre)
 {
         tEnemigo *enemigo;
         enemigo = (tEnemigo *)malloc(sizeof(tEnemigo));
@@ -13,32 +12,29 @@ tEnemigo* crearEnemigo( char tipo, int maxmov, int pasos, char direccion, int x,
         enemigo->direccion = direccion;
         enemigo->x = x;
         enemigo->y = y;
+        enemigo->nombre= nombre;
         return enemigo;
 }
  
 void agregarEnemigo(tLista *lista, tEnemigo *enemigo)
 {
-        if(lista->curr == NULL)
-        {
-                lista->curr = (tNodo *)malloc(sizeof(tNodo));
-                lista->curr->info = enemigo;
-                lista->tail = lista->curr;
-                lista->head = lista->curr;
-                lista->curr->label = 'E';
-                lista->listSize++;
-        }
- 
-        else
-        {
-                tNodo *aux = lista->curr->siguiente;
-                lista->curr->siguiente = (tNodo *)malloc(sizeof(tNodo));
-                lista->curr->siguiente->info = (void*) enemigo;
-                lista->curr->siguiente->siguiente = aux;
-                lista->curr->label = 'E';
 
-                if (lista->curr == lista->tail) lista->tail = lista->curr->siguiente;
-                lista->listSize++;
-        }
+    if(lista->listSize == 0)
+    {
+        lista->head = lista->curr =  lista->tail = (tNodo*)malloc(sizeof(tNodo));
+        lista->head->info  = enemigo;
+        lista->head->label = 'E';
+        lista->listSize++;
+    }
+
+    else
+    {
+        lista->tail->siguiente = (tNodo*)malloc(sizeof(tNodo));
+        lista->tail = lista->tail->siguiente;
+        lista->tail->info = enemigo;
+        lista->tail->label = 'E';
+        lista->listSize++;
+    }
 }
 
 tLista *crearListaEnemigos(char **map, int largo, int ancho) 
@@ -52,66 +48,65 @@ tLista *crearListaEnemigos(char **map, int largo, int ancho)
         {
             if(map[y][x] == '2')
             {
-                agregarEnemigo(enemigos, crearEnemigo('H',2,0,'R',x,y)); //Horizontal, derecha
+                agregarEnemigo(enemigos, crearEnemigo('H',2,0,'R',x,y,'2')); //Horizontal, right
             }
             else if (map[y][x] == '3')
             {
-                agregarEnemigo(enemigos,crearEnemigo('V',2,0,'U',x,y)); //Vertical, arriba 
+                agregarEnemigo(enemigos,crearEnemigo('V',2,0,'U',x,y,'3')); //Vertical, arriba 
             }
 
             else if (map[y][x] == '4')
             {
-                agregarEnemigo(enemigos, crearEnemigo('H',3,0,'L',x,y)); //Horizontal, left
+                agregarEnemigo(enemigos, crearEnemigo('H',3,0,'L',x,y,'4')); //Horizontal, left
                 
             }
 
             else if (map[y][x] == '5')
             {
-                agregarEnemigo(enemigos,  crearEnemigo('V',3,0,'D',x,y)); //Vertical, abajo
-               
+                agregarEnemigo(enemigos,  crearEnemigo('V',3,0,'D',x,y,'5')); //Vertical, abajo
             }   
 
             else if (map[y][x] == '6')
             {
-                agregarEnemigo(enemigos, crearEnemigo('H',4,0,'R',x,y));
-                
+                agregarEnemigo(enemigos, crearEnemigo('H',4,0,'R',x,y,'6'));
             }
 
             else if (map[y][x] == '7')
             {
-                agregarEnemigo(enemigos, crearEnemigo('V',4,0,'U',x,y));
-                
+                agregarEnemigo(enemigos, crearEnemigo('V',4,0,'U',x,y,'7'));
             }
 
             else if (map[y][x] == '8')
             {
-                agregarEnemigo(enemigos, crearEnemigo('H',5,0,'L',x,y));
+                agregarEnemigo(enemigos, crearEnemigo('H',5,0,'L',x,y,'8'));
             }
 
             else if (map[y][x] == '9')
             {
-                agregarEnemigo(enemigos,crearEnemigo('V',5,0,'D',x,y));
+                agregarEnemigo(enemigos,crearEnemigo('V',5,0,'D',x,y,'9'));
             }
         }
     }
+
     return enemigos;
 }
 
 char siguiente_movimiento(void *general, char **map, int x, int y)
 {
+
     tEnemigo *enemigo;
     enemigo = (tEnemigo *)general;
-    printf("%c\n", enemigo->tipo );
+
     if(enemigo->tipo == 'H')
     {
-        if(enemigo->direccion =='D')
+        if(enemigo->direccion =='R')
         {
             if (map[y][x+2] == '0')
             {
                 if(enemigo->maxmov != enemigo->pasos)
                 {
                     map[y][x] = '0';
-                    map[y][x+2] = '1';
+                    map[y][x+2] = enemigo->nombre;
                     enemigo->maxmov--;
                     enemigo->pasos++;
                     return '1';
@@ -125,40 +120,45 @@ char siguiente_movimiento(void *general, char **map, int x, int y)
 
             else 
             {
-                enemigo->direccion == 'I';
-                siguiente_movimiento(enemigo,map,x,y);
+                enemigo->direccion = 'L';
+                return '1';
             }
         }
 
-        else if(enemigo->direccion == 'I')
+        else if(enemigo->direccion == 'L')
         {
             if(map[y][x-2] == '0')
             {
                 if(enemigo->maxmov != enemigo->pasos)
                 {
                     map[y][x] = '0';
-                    map[y][x+2] = '1';
+                    map[y][x+2] = enemigo->nombre;
                     enemigo->maxmov--;
                     enemigo->pasos++;
                     return '1';
                 }
             }
 
-            else if(map[y][x+2] == '*')
+            else if(map[y][x-2] == '*')
             {
                 return '2'; 
             }
 
             else 
             {
-                enemigo->direccion == 'I';
-                siguiente_movimiento(enemigo,map,x,y);
+                enemigo->direccion = 'R';
+                map[y][x] = '0';
+                map[y][x+2] = enemigo->nombre;
+                enemigo->maxmov--;
+                enemigo->pasos++;
+                return '1';
             }
         }
     }
 
     else if (enemigo->tipo == 'V')
     {
+
         if(enemigo->direccion =='U')
         {
             if (map[y-1][x] == '0')
@@ -166,7 +166,7 @@ char siguiente_movimiento(void *general, char **map, int x, int y)
                 if(enemigo->maxmov != enemigo->pasos)
                 {
                     map[y][x] = '0';
-                    map[y-1][x] = '1';
+                    map[y-1][x] = enemigo->nombre;
                     enemigo->maxmov--;
                     enemigo->pasos++;
                     return '1';
@@ -180,8 +180,8 @@ char siguiente_movimiento(void *general, char **map, int x, int y)
 
             else 
             {
-                enemigo->direccion == 'D';
-                siguiente_movimiento(enemigo,map,x,y);
+                enemigo->direccion = 'D';
+                return '1';
             }
         }
 
@@ -192,7 +192,7 @@ char siguiente_movimiento(void *general, char **map, int x, int y)
                 if(enemigo->maxmov != enemigo->pasos)
                 {
                     map[y][x] = '0';
-                    map[y+1][x] = '1';
+                    map[y+1][x] = enemigo->nombre;
                     enemigo->maxmov--;
                     enemigo->pasos++;
                     return '1';
@@ -206,11 +206,13 @@ char siguiente_movimiento(void *general, char **map, int x, int y)
 
             else 
             {
-                enemigo->direccion == 'U';
-                siguiente_movimiento(enemigo,map,x,y);
+                enemigo->direccion = 'U';
+                return '1';
             }
         }
     }
+
+    return '2';
 }
 
 char movEnemigos(tLista *listaEnemigos, char **map)
@@ -218,17 +220,17 @@ char movEnemigos(tLista *listaEnemigos, char **map)
     void *general;
     tEnemigo *enemigo;
     char a;
-    int x,y;
-    moveToStart(listaEnemigos);
+    int x1,y1,i;
+    moveToStart(listaEnemigos);   
+    i = 0;
     while(listaEnemigos->listSize != listaEnemigos->pos || a == '2')
     {   
-        enemigo = (tEnemigo *)listaEnemigos->curr->info;
-        x = enemigo->x;
-        y = enemigo->y;
-        general = &listaEnemigos->curr->info;
-        a = enemigo->siguiente_movimiento(general, map , x, y);   
-        moveToNext(listaEnemigos);        
+        general = listaEnemigos->curr->info;
+        enemigo = (tEnemigo*)listaEnemigos->curr->info;
+        x1 = enemigo->x;
+        y1 = enemigo->y;
+        a = enemigo->siguiente_movimiento(general, map ,x1,y1);
+        moveToNext(listaEnemigos); 
     }
     return a;
-
 }

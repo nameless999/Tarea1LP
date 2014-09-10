@@ -748,8 +748,9 @@ int main()
 
 	//Declaración de variables
  	int x,y,largo,ancho,NumMapa;
- 	char **map, anchochar[10],largochar[10],tecla,accion;
+ 	char **map, anchochar[10],largochar[10],tecla,accion,accion1;
  	int pos[3], tamano[2];
+   tEnemigo* enemy;
    tLista *listaEnemigosSwitch;
  	//Termina declaración de variables
 
@@ -777,20 +778,19 @@ int main()
    largo = tamano[0];
    ancho = tamano[1];
    listaEnemigosSwitch = crearListaEnemigos(map,largo,ancho);
-
+   
    printMap(map,largo,ancho);
    printf("Es su turno, por favor haga un movimiento.\n");
    while(1)
    {
  	//Termina de generar el mapa
-   	accion = movUsuario(map, pos,  largo, ancho);
-      accion = movEnemigos(listaEnemigosSwitch, map);   
-
+      accion = movUsuario(map, pos, largo, ancho);
+      accion1 = movEnemigos(listaEnemigosSwitch, map);   
+      
       if (accion == '2' && NumMapa >= 2)
          {
             accion = '3';
          }
-
       switch(accion)
       {
          case '1':
