@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "listaElementos.c"
+#include "enemigos.c"
+#include "interruptores.c"
+#include "listapuertas.c"
 
 void Switch(char **map, tLista *lista, char label)
 {
@@ -995,6 +998,7 @@ int main()
             case '0':
                printf ("\033[2J\033[1;1H");  
                printf("Juego terminado, más suerte para la próxima.\n");
+               free(listaEnemigosSwitch);
                exit(0);
                break;
             case '1':
